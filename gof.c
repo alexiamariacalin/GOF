@@ -76,7 +76,7 @@ void calculate_new_generation(char **gen, int N, int M, int K)
     }
     for (int i = 0; i < N; i++)
     {
-        aux[i] = (char *)malloc(sizeof(char) * (M+1));
+        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
         for (int j = 0; j < M; j++)
         {
             int cells = count_cells(gen, N, M, i, j);
@@ -96,6 +96,15 @@ void calculate_new_generation(char **gen, int N, int M, int K)
     }
     copy_generation(gen, aux, N, M);
 }
+void TASK_1(char **gen, int N, int M, int K, FILE *fout)
+{
+    print_generation(gen, N, M, 0, fout);
+    for (int i = 1; i <= K; i++)
+    {
+        calculate_new_generation(gen, N, M, i);
+        print_generation(gen, N, M, i, fout);
+    }
+}
 int main(int argc, const char *argv[])
 {
     int T, M, N, K;
@@ -104,6 +113,8 @@ int main(int argc, const char *argv[])
 
     open_files(&fin, &fout, argv);
     read_data(&T, &N, &M, &K, &gen, fin);
+    if (T == 1)
+        TASK_1(gen, N, M, K, fout);
 
     return 0;
 }
