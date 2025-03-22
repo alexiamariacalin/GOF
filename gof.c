@@ -1,6 +1,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+typedef struct LIST
+{
+    int l, c;
+    struct LIST *next;
+} list;
+typedef struct STACK
+{
+    int K;
+    list *first, *last;
+    struct STACK *next;
+} stack;
+stack *top = NULL;
+void print_list(stack *top, FILE *fout)
+{
+    fprintf(fout, "%d ", top->K);
+    list *p = top->first;
+    while (p->next != NULL)
+    {
+        fprintf(fout, "%d %d ", p->l, p->c);
+        p = p->next;
+    }
+    fprintf(fout, "%d %d", p->l, p->c);
+    fprintf(fout, "\n");
+}
+void print_stack(stack *top, FILE *fout)
+{
+    if (top == NULL)
+        return;
+    print_stack(top->next, fout);
+    print_list(top, fout);
+}
+list *create_node_list(int l, int c)
+{
+    list *p = (list *)malloc(sizeof(list));
+    p->l = l;
+    p->c = c;
+    p->next = NULL;
+    return p;
+}
+void add_node_list(list **first, list **last, int l, int c)
+{
+    list *p = create_node_list(l, c);
+    if ((*first) == NULL)
+        (*first) = (*last) = p;
+    else
+    {
+        (*last)->next = p;
+        (*last) = p;
+    }
+}
+stack *create_node_stack(int K, list *first)
+{
+    stack *p = (stack *)malloc(sizeof(stack));
+    p->K = K;
+    p->first = first;
+    p->next = NULL;
+    return p;
+}
+void push_node_stack(stack **top, int K, list *first)
+{
+    if (first == NULL)
+        return;
+    stack *p = create_node_stack(K, first);
+    if ((*top) != NULL)
+        p->next = (*top);
+    (*top) = p;
+}
 void open_files(FILE **fin, FILE **fout, const char *argv[])
 {
     *fin = fopen(argv[1], "rt");
@@ -69,6 +136,8 @@ void calculate_new_generation(char **gen, int N, int M, int K)
 {
     char **aux;
     aux = (char **)malloc(sizeof(char *) * N);
+    list *first = NULL;
+    list *last = NULL;
     if (aux == NULL)
     {
         printf("ERROR: Could not allocate memory :(\n");
@@ -90,11 +159,14 @@ void calculate_new_generation(char **gen, int N, int M, int K)
                 aux[i][j] = 'X';
             else
                 aux[i][j] = '+';
+            if (gen[i][j] != aux[i][j])
+                add_node_list(&first, &last, i, j);
         }
         aux[i][M] = '\0';
         // printf("\n");
     }
     copy_generation(gen, aux, N, M);
+    push_node_stack(&top, K, first);
 }
 void TASK_1(char **gen, int N, int M, int K, FILE *fout)
 {
@@ -115,6 +187,5 @@ int main(int argc, const char *argv[])
     read_data(&T, &N, &M, &K, &gen, fin);
     if (T == 1)
         TASK_1(gen, N, M, K, fout);
-
     return 0;
 }
