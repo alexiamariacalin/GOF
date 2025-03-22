@@ -13,31 +13,18 @@ typedef struct STACK
     struct STACK *next;
 } stack;
 stack *top = NULL;
-void print_list(stack *top, FILE *fout)
+typedef struct TREE
 {
-    fprintf(fout, "%d ", top->K);
-    list *p = top->first;
-    while (p->next != NULL)
-    {
-        fprintf(fout, "%d %d ", p->l, p->c);
-        p = p->next;
-    }
-    fprintf(fout, "%d %d", p->l, p->c);
-    fprintf(fout, "\n");
-}
-void print_stack(stack *top, FILE *fout)
-{
-    if (top == NULL)
-        return;
-    print_stack(top->next, fout);
-    print_list(top, fout);
-}
+    list *first, *last;
+    struct TREE *left, *right;
+} tree;
+tree *root = NULL;
 list *create_node_list(int l, int c)
 {
     list *p = (list *)malloc(sizeof(list));
     if (p == NULL)
     {
-        printf("ERROR: Could not allocate memory for list element :(\n");
+        printf("ERROR: Could not allocate memory for list :(\n");
         exit(1);
     }
     p->l = l;
@@ -56,12 +43,62 @@ void add_node_list(list **first, list **last, int l, int c)
         (*last) = p;
     }
 }
+void print_list(list *first, FILE *fout)
+{
+    while (first->next != NULL)
+    {
+        fprintf(fout, "%d %d ", first->l, first->c);
+        first = first->next;
+    }
+    fprintf(fout, "%d %d", first->l, first->c);
+    fprintf(fout, "\n");
+}
+tree *create_node_tree(list *first, list *last)
+{
+    tree *p = (tree *)malloc(sizeof(tree));
+    if (p == NULL)
+    {
+        printf("ERROR: Could not allocate memory for binary tree :(\n");
+        exit(1);
+    }
+    p->first = first;
+    p->last = last;
+    p->left = NULL;
+    p->right = NULL;
+    return p;
+}
+void initialise_tree(tree **root, char **gen, int N, int M)
+{
+    list *first = NULL;
+    list *last = NULL;
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++)
+            if (gen[i][j] == 'X')
+                add_node_list(&first, &last, i, j);
+    (*root) = create_node_tree(first, last);
+}
+void print_tree_preorder(tree *root, FILE *fout)
+{
+    if (root == NULL)
+        return;
+    print_list(root->first, fout);
+    print_tree_preorder(root->left, fout);
+    print_tree_preorder(root->right, fout);
+}
+void print_stack(stack *top, FILE *fout)
+{
+    if (top == NULL)
+        return;
+    print_stack(top->next, fout);
+    fprintf(fout, "%d ", top->K);
+    print_list(top->first, fout);
+}
 stack *create_node_stack(int K, list *first)
 {
     stack *p = (stack *)malloc(sizeof(stack));
     if (p == NULL)
     {
-        printf("ERROR: Could not allocate memory for stack element :(\n");
+        printf("ERROR: Could not allocate memory for stack :(\n");
         exit(1);
     }
     p->K = K;
@@ -112,6 +149,11 @@ void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
     {
         fgets(buf, 2, fin);
         (*gen)[i] = (char *)malloc(sizeof(char) * ((*M) + 1));
+        if ((*gen)[i] == NULL)
+        {
+            printf("ERROR: Could not allocate memory for matrix:(\n");
+            exit(1);
+        }
         (*gen)[i][*M] = '\0';
         fread((*gen)[i], sizeof((*gen)[0][0]), *M, fin);
     }
