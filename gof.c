@@ -177,6 +177,12 @@ void TASK_1(char **gen, int N, int M, int K, FILE *fout)
         print_generation(gen, N, M, i, fout);
     }
 }
+void TASK_2(char **gen, int N, int M, int K, FILE *fout)
+{
+    for (int i = 1; i <= K; i++)
+        calculate_new_generation(gen, N, M, i);
+    print_stack(top, fout);
+}
 int main(int argc, const char *argv[])
 {
     int T, M, N, K;
@@ -187,5 +193,7 @@ int main(int argc, const char *argv[])
     read_data(&T, &N, &M, &K, &gen, fin);
     if (T == 1)
         TASK_1(gen, N, M, K, fout);
+    if (T == 2)
+        TASK_2(gen, N, M, K, fout);
     return 0;
 }
