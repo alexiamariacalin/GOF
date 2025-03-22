@@ -35,6 +35,11 @@ void print_stack(stack *top, FILE *fout)
 list *create_node_list(int l, int c)
 {
     list *p = (list *)malloc(sizeof(list));
+    if (p == NULL)
+    {
+        printf("ERROR: Could not allocate memory for list element :(\n");
+        exit(1);
+    }
     p->l = l;
     p->c = c;
     p->next = NULL;
@@ -54,6 +59,11 @@ void add_node_list(list **first, list **last, int l, int c)
 stack *create_node_stack(int K, list *first)
 {
     stack *p = (stack *)malloc(sizeof(stack));
+    if (p == NULL)
+    {
+        printf("ERROR: Could not allocate memory for stack element :(\n");
+        exit(1);
+    }
     p->K = K;
     p->first = first;
     p->next = NULL;
@@ -94,7 +104,7 @@ void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
     (*gen) = (char **)malloc(sizeof(char *) * (*N));
     if ((*gen) == NULL)
     {
-        printf("ERROR: Could not allocate memory :(\n");
+        printf("ERROR: Could not allocate memory for matrix:(\n");
         exit(1);
     }
     char buf[2];
@@ -140,12 +150,17 @@ void calculate_new_generation(char **gen, int N, int M, int K)
     list *last = NULL;
     if (aux == NULL)
     {
-        printf("ERROR: Could not allocate memory :(\n");
+        printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
         exit(1);
     }
     for (int i = 0; i < N; i++)
     {
         aux[i] = (char *)malloc(sizeof(char) * (M + 1));
+        if (aux[i] == NULL)
+        {
+            printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
+            exit(1);
+        }
         for (int j = 0; j < M; j++)
         {
             int cells = count_cells(gen, N, M, i, j);
