@@ -183,6 +183,13 @@ void TASK_2(char **gen, int N, int M, int K, FILE *fout)
         calculate_new_generation(gen, N, M, i);
     print_stack(top, fout);
 }
+void solve_task(int T, char **gen, int N, int M, int K, FILE *fout)
+{
+    if (T == 1)
+        TASK_1(gen, N, M, K, fout);
+    if (T == 2)
+        TASK_2(gen, N, M, K, fout);
+}
 int main(int argc, const char *argv[])
 {
     int T, M, N, K;
@@ -191,9 +198,7 @@ int main(int argc, const char *argv[])
 
     open_files(&fin, &fout, argv);
     read_data(&T, &N, &M, &K, &gen, fin);
-    if (T == 1)
-        TASK_1(gen, N, M, K, fout);
-    if (T == 2)
-        TASK_2(gen, N, M, K, fout);
+    solve_task(T, gen, N, M, K, fout);
+
     return 0;
 }
