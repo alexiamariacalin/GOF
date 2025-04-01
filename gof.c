@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "generation.h"
 #include "stacklib.h"
 #include "listlib.h"
 #include "treelib.h"
-stack *top = NULL;
-tree *root = NULL;
 void open_files(FILE **fin, FILE **fout, const char *argv[])
 {
     *fin = fopen(argv[1], "rt");
@@ -15,16 +14,6 @@ void open_files(FILE **fin, FILE **fout, const char *argv[])
         printf("ERROR: Could not open file(s) :(\n");
         exit(1);
     }
-}
-void print_generation(char **gen, int N, int M, int K, FILE *fout)
-{
-    // fprintf (fout, "A %d-a generatie:\n", K);
-    for (int i = 0; i < N; i++)
-    {
-        fputs(gen[i], fout);
-        fputs("\n", fout);
-    }
-    fputs("\n", fout);
 }
 void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
 {
@@ -49,104 +38,39 @@ void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
         fread((*gen)[i], sizeof((*gen)[0][0]), *M, fin);
     }
 }
-int in_matrix(int N, int M, int i, int j)
-{
-    if (i >= 0 && j >= 0 && i < N && j < M)
-        return 1;
-    return 0;
-}
-int count_cells(char **gen, int N, int M, int i, int j)
-{
-    int cells = 0;
-    const int dx[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
-    const int dy[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
-    for (int k = 0; k < 8; k++)
-    {
-        int inew = i + dx[k];
-        int jnew = j + dy[k];
-        if (in_matrix(N, M, inew, jnew) && gen[inew][jnew] == 'X')
-            cells++;
-    }
-    return cells;
-}
-void copy_generation(char **gen, char **aux, int N, int M)
-{
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < M; j++)
-            gen[i][j] = aux[i][j];
-}
-void calculate_new_generation(char **gen, int N, int M, int K)
-{
-    char **aux;
-    aux = (char **)malloc(sizeof(char *) * N);
-    list *first = NULL;
-    list *last = NULL;
-    if (aux == NULL)
-    {
-        printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-        exit(1);
-    }
-    for (int i = 0; i < N; i++)
-    {
-        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
-        if (aux[i] == NULL)
-        {
-            printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-            exit(1);
-        }
-        for (int j = 0; j < M; j++)
-        {
-            int cells = count_cells(gen, N, M, i, j);
-            // printf("%d ", cells);
-            if (gen[i][j] == 'X')
-                if (cells == 2 || cells == 3)
-                    aux[i][j] = 'X';
-                else
-                    aux[i][j] = '+';
-            else if (cells == 3)
-                aux[i][j] = 'X';
-            else
-                aux[i][j] = '+';
-            if (gen[i][j] != aux[i][j])
-                add_node_list(&first, &last, i, j);
-        }
-        aux[i][M] = '\0';
-        // printf("\n");
-    }
-    copy_generation(gen, aux, N, M);
-    push_node_stack(&top, K, first);
-}
-void TASK_1(char **gen, int N, int M, int K, FILE *fout)
+void TASK_1(char **gen, int N, int M, int K, stack *top, FILE *fout)
 {
     print_generation(gen, N, M, 0, fout);
     for (int i = 1; i <= K; i++)
     {
-        calculate_new_generation(gen, N, M, i);
+        calculate_new_generation(gen, N, M, i, &top);
         print_generation(gen, N, M, i, fout);
     }
 }
-void TASK_2(char **gen, int N, int M, int K, FILE *fout)
+void TASK_2(char **gen, int N, int M, int K, stack *top, FILE *fout)
 {
     for (int i = 1; i <= K; i++)
-        calculate_new_generation(gen, N, M, i);
+        calculate_new_generation(gen, N, M, i, &top);
     print_stack(top, fout);
 }
-void solve_task(int T, char **gen, int N, int M, int K, FILE *fout)
+void solve_task(int T, char **gen, int N, int M, int K, stack *top, FILE *fout)
 {
     if (T == 1)
-        TASK_1(gen, N, M, K, fout);
+        TASK_1(gen, N, M, K, top, fout);
     if (T == 2)
-        TASK_2(gen, N, M, K, fout);
+        TASK_2(gen, N, M, K, top, fout);
 }
 int main(int argc, const char *argv[])
 {
     int T, M, N, K;
     char **gen;
+    stack *top = NULL;
+    tree *root = NULL;
     FILE *fin, *fout;
 
     open_files(&fin, &fout, argv);
     read_data(&T, &N, &M, &K, &gen, fin);
-    solve_task(T, gen, N, M, K, fout);
+    solve_task(T, gen, N, M, K, top, fout);
 
     return 0;
 }
