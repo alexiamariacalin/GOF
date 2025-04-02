@@ -15,7 +15,7 @@ int in_matrix(int N, int M, int i, int j)
         return 1;
     return 0;
 }
-int count_cells(char **gen, int N, int M, int i, int j)
+int count_live_cells(char **gen, int N, int M, int i, int j)
 {
     int cells = 0;
     const int dx[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
@@ -35,12 +35,10 @@ void copy_generation(char **gen, char **aux, int N, int M)
         for (int j = 0; j < M; j++)
             gen[i][j] = aux[i][j];
 }
-void calculate_new_generation(char **gen, int N, int M, int K, stack **top)
+char **calculate_new_generation_standard(char **gen, int N, int M, list **first, list **last)
 {
-    char **aux;
-    aux = (char **)malloc(sizeof(char *) * N);
-    list *first = NULL;
-    list *last = NULL;
+    char **aux = (char **)malloc(sizeof(char *) * N);
+    (*first) = (*last) = NULL;
     if (aux == NULL)
     {
         printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
@@ -56,8 +54,7 @@ void calculate_new_generation(char **gen, int N, int M, int K, stack **top)
         }
         for (int j = 0; j < M; j++)
         {
-            int cells = count_cells(gen, N, M, i, j);
-            // printf("%d ", cells);
+            int cells = count_live_cells(gen, N, M, i, j);
             if (gen[i][j] == 'X')
                 if (cells == 2 || cells == 3)
                     aux[i][j] = 'X';
@@ -68,11 +65,40 @@ void calculate_new_generation(char **gen, int N, int M, int K, stack **top)
             else
                 aux[i][j] = '+';
             if (gen[i][j] != aux[i][j])
-                add_node_list(&first, &last, i, j);
+                add_node_list(first, last, i, j);
         }
         aux[i][M] = '\0';
-        // printf("\n");
     }
-    copy_generation(gen, aux, N, M);
-    push_node_stack(top, K, first);
+    return aux;
+}
+char **calculate_new_generation_B(char **gen, int N, int M, list **first, list **last)
+{
+    char **aux = (char **)malloc(sizeof(char *) * N);
+    (*first) = (*last) = NULL;
+    if (aux == NULL)
+    {
+        printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
+        exit(1);
+    }
+    for (int i = 0; i < N; i++)
+    {
+        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
+        if (aux[i] == NULL)
+        {
+            printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
+            exit(1);
+        }
+        for (int j = 0; j < M; j++)
+        {
+            int cells = count_live_cells(gen, N, M, i, j);
+            if (cells == 2)
+                aux[i][j] = 'X';
+            else
+                aux[i][j] = gen[i][j];
+            if (gen[i][j] != aux[i][j])
+                add_node_list(first, last, i, j);
+        }
+        aux[i][M] = '\0';
+    }
+    return aux;
 }

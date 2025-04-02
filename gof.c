@@ -38,27 +38,46 @@ void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
         fread((*gen)[i], sizeof((*gen)[0][0]), *M, fin);
     }
 }
-void TASK_1(char **gen, int N, int M, int K, stack *top, FILE *fout)
+void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, FILE *fout)
 {
-    print_generation(gen, N, M, 0, fout);
-    for (int i = 1; i <= K; i++)
+    switch (T)
     {
-        calculate_new_generation(gen, N, M, i, &top);
-        print_generation(gen, N, M, i, fout);
+    case 1: // task 1
+    {
+        print_generation(gen, N, M, 0, fout);
+        for (int i = 1; i <= K; i++)
+        {
+            list *first, *last;
+            gen = calculate_new_generation_standard(gen, N, M, &first, &last);
+            print_generation(gen, N, M, i, fout);
+        }
+        break;
     }
-}
-void TASK_2(char **gen, int N, int M, int K, stack *top, FILE *fout)
-{
-    for (int i = 1; i <= K; i++)
-        calculate_new_generation(gen, N, M, i, &top);
-    print_stack(top, fout);
-}
-void solve_task(int T, char **gen, int N, int M, int K, stack *top, FILE *fout)
-{
-    if (T == 1)
-        TASK_1(gen, N, M, K, top, fout);
-    if (T == 2)
-        TASK_2(gen, N, M, K, top, fout);
+    case 2: // task 2
+    {
+        for (int i = 1; i <= K; i++)
+        {
+            list *first, *last;
+            gen = calculate_new_generation_standard(gen, N, M, &first, &last);
+            push_node_stack(&top, i, first);
+        }
+        print_stack(top, fout);
+        break;
+    }
+    case 3: // task 3
+    {
+        initialise_tree(&root, gen, N, M);
+        fill_tree(gen, N, M, K, root);
+        print_generation(gen, N, M, K, fout);
+        reconstruct_generation_print_preorder(gen, N, M, K, root->left, fout);
+        reconstruct_generation_print_preorder(gen, N, M, K, root->right, fout);
+        break;
+    }
+    case 4: // task 4
+    {
+        break;
+    }
+    }
 }
 int main(int argc, const char *argv[])
 {
@@ -70,7 +89,7 @@ int main(int argc, const char *argv[])
 
     open_files(&fin, &fout, argv);
     read_data(&T, &N, &M, &K, &gen, fin);
-    solve_task(T, gen, N, M, K, top, fout);
+    solve_task(T, gen, N, M, K, top, root, fout);
 
     return 0;
 }

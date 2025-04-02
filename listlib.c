@@ -25,6 +25,8 @@ void add_node_list(list **first, list **last, int l, int c)
 }
 void print_list(list *first, FILE *fout)
 {
+    if (first == NULL)
+        return;
     while (first->next != NULL)
     {
         fprintf(fout, "%d %d ", first->l, first->c);

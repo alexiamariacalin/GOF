@@ -7,6 +7,7 @@
 #include "treelib.h"
 void print_generation(char **gen, int N, int M, int K, FILE *fout);
 int in_matrix(int N, int M, int i, int j);
-int count_cells(char **gen, int N, int M, int i, int j);
+int count_live_cells(char **gen, int N, int M, int i, int j);
 void copy_generation(char **gen, char **aux, int N, int M);
-void calculate_new_generation(char **gen, int N, int M, int K, stack **top);
+char **calculate_new_generation_standard(char **gen, int N, int M, list **first, list **last);
+char **calculate_new_generation_B(char **gen, int N, int M, list **first, list **last);
