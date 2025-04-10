@@ -8,7 +8,7 @@ run:
 check:
 	./checker -i
 add_files:
-	git add gof.c generation.c listlib.c stacklib.c treelib.c generation.h listlib.h stacklib.h treelib.h makefile
+	git add gof.c generation.c listlib.c stacklib.c treelib.c generation.h listlib.h stacklib.h treelib.h makefile in ref checker
 delete:
 	rm -f gof
 	bash -c 'for i in $$(seq 1 20); do rm -f "out/data$$i.out"; done'
