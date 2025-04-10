@@ -12,7 +12,7 @@ stack *create_node_stack(int K, list *first)
     stack *p = (stack *)malloc(sizeof(stack));
     if (p == NULL)
     {
-        printf("ERROR: Could not allocate memory for stack :(\n");
+        perror("ERROR: Could not allocate memory for stack :(\n");
         exit(1);
     }
     p->K = K;

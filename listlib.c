@@ -4,7 +4,7 @@ list *create_node_list(int l, int c)
     list *p = (list *)malloc(sizeof(list));
     if (p == NULL)
     {
-        printf("ERROR: Could not allocate memory for list :(\n");
+        perror("ERROR: Could not allocate memory for list :(\n");
         exit(1);
     }
     p->l = l;

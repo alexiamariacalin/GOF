@@ -11,31 +11,28 @@ void open_files(FILE **fin, FILE **fout, const char *argv[])
     *fout = fopen(argv[2], "wt");
     if ((*fin) == NULL || (*fout) == NULL)
     {
-        printf("ERROR: Could not open file(s) :(\n");
+        perror("ERROR: Could not open file(s) :(\n");
+        exit(1);
+    }
+}
+void close_files(FILE *fin, FILE *fout)
+{
+    if (fclose(fin) != 0 || fclose(fout) != 0)
+    {
+        perror("ERROR: Could not close file(s) :(\n");
         exit(1);
     }
 }
 void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
 {
     fscanf(fin, "%d %d %d %d", T, N, M, K);
-    (*gen) = (char **)malloc(sizeof(char *) * (*N));
-    if ((*gen) == NULL)
-    {
-        printf("ERROR: Could not allocate memory for matrix:(\n");
-        exit(1);
-    }
+    (*gen) = allocate_memory_matrix(*N, *M);
     char buf[2];
     for (int i = 0; i < *N; i++)
     {
         fgets(buf, 2, fin);
-        (*gen)[i] = (char *)malloc(sizeof(char) * ((*M) + 1));
-        if ((*gen)[i] == NULL)
-        {
-            printf("ERROR: Could not allocate memory for matrix:(\n");
-            exit(1);
-        }
-        (*gen)[i][*M] = '\0';
         fread((*gen)[i], sizeof((*gen)[0][0]), *M, fin);
+        (*gen)[i][*M] = '\0';
     }
 }
 void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, FILE *fout)
@@ -90,6 +87,7 @@ int main(int argc, const char *argv[])
     open_files(&fin, &fout, argv);
     read_data(&T, &N, &M, &K, &gen, fin);
     solve_task(T, gen, N, M, K, top, root, fout);
+    close_files(fin, fout);
 
     return 0;
 }

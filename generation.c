@@ -37,21 +37,10 @@ void copy_generation(char **gen, char **aux, int N, int M)
 }
 char **calculate_new_generation_standard(char **gen, int N, int M, list **first, list **last)
 {
-    char **aux = (char **)malloc(sizeof(char *) * N);
+    char **aux = allocate_memory_matrix(N, M);
     (*first) = (*last) = NULL;
-    if (aux == NULL)
-    {
-        printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-        exit(1);
-    }
     for (int i = 0; i < N; i++)
     {
-        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
-        if (aux[i] == NULL)
-        {
-            printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-            exit(1);
-        }
         for (int j = 0; j < M; j++)
         {
             int cells = count_live_cells(gen, N, M, i, j);
@@ -73,21 +62,10 @@ char **calculate_new_generation_standard(char **gen, int N, int M, list **first,
 }
 char **calculate_new_generation_B(char **gen, int N, int M, list **first, list **last)
 {
-    char **aux = (char **)malloc(sizeof(char *) * N);
+    char **aux = allocate_memory_matrix(N, M);
     (*first) = (*last) = NULL;
-    if (aux == NULL)
-    {
-        printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-        exit(1);
-    }
     for (int i = 0; i < N; i++)
     {
-        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
-        if (aux[i] == NULL)
-        {
-            printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-            exit(1);
-        }
         for (int j = 0; j < M; j++)
         {
             int cells = count_live_cells(gen, N, M, i, j);
@@ -101,4 +79,29 @@ char **calculate_new_generation_B(char **gen, int N, int M, list **first, list *
         aux[i][M] = '\0';
     }
     return aux;
+}
+char **allocate_memory_matrix(int N, int M)
+{
+    char **aux = (char **)malloc(sizeof(char *) * N);
+    if (aux == NULL)
+    {
+        perror("ERROR: Could not allocate memory for auxiliary matrix:(\n");
+        exit(1);
+    }
+    for (int i = 0; i < N; i++)
+    {
+        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
+        if (aux[i] == NULL)
+        {
+            perror("ERROR: Could not allocate memory for auxiliary matrix:(\n");
+            exit(1);
+        }
+    }
+    return aux;
+}
+void free_memory_matrix(char **gen, int N, int M)
+{
+    for (int i = 0; i < N; i++)
+        free(gen[i]);
+    free(gen);
 }

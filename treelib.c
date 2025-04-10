@@ -4,7 +4,7 @@ tree *create_node_tree(list *first, list *last)
     tree *p = (tree *)malloc(sizeof(tree));
     if (p == NULL)
     {
-        printf("ERROR: Could not allocate memory for binary tree :(\n");
+        perror("ERROR: Could not allocate memory for binary tree :(\n");
         exit(1);
     }
     p->first = first;
@@ -35,20 +35,9 @@ void reconstruct_generation_print_preorder(char **gen, int N, int M, int K, tree
 {
     if (K == 0)
         return;
-    char **aux = (char **)malloc(sizeof(char *) * N);
-    if (aux == NULL)
-    {
-        printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-        exit(1);
-    }
+    char **aux = aux = allocate_memory_matrix(N, M);
     for (int i = 0; i < N; i++)
     {
-        aux[i] = (char *)malloc(sizeof(char) * (M + 1));
-        if (aux[i] == NULL)
-        {
-            printf("ERROR: Could not allocate memory for auxiliary matrix:(\n");
-            exit(1);
-        }
         for (int j = 0; j < M; j++)
             if (node->first != NULL && node->first->l == i && node->first->c == j)
             {
@@ -70,13 +59,9 @@ void fill_tree(char **gen, int N, int M, int K, tree *root)
 {
     if (K == 0)
         return;
-    char **auxl = (char **)malloc(sizeof(char *) * N);
-    char **auxr = (char **)malloc(sizeof(char *) * N);
-    for (int i = 0; i < M; i++)
-    {
-        auxl[i] = (char *)malloc(sizeof(char) * (M + 1));
-        auxr[i] = (char *)malloc(sizeof(char) * (M + 1));
-    }
+    char **auxl = allocate_memory_matrix(N, M);
+    char **auxr = allocate_memory_matrix(N, M);
+
     copy_generation(auxl, gen, N, M);
     copy_generation(auxr, gen, N, M);
 
