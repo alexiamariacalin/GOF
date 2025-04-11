@@ -35,7 +35,7 @@ void copy_generation(char **gen, char **aux, int N, int M)
         for (int j = 0; j < M; j++)
             gen[i][j] = aux[i][j];
 }
-char **calculate_new_generation_standard(char **gen, int N, int M, list **first, list **last)
+char **calculate_new_generation(char **gen, int N, int M, list **first, list **last, const char *rule)
 {
     char **aux = allocate_memory_matrix(N, M);
     (*first) = (*last) = NULL;
@@ -44,35 +44,21 @@ char **calculate_new_generation_standard(char **gen, int N, int M, list **first,
         for (int j = 0; j < M; j++)
         {
             int cells = count_live_cells(gen, N, M, i, j);
-            if (gen[i][j] == 'X')
-                if (cells == 2 || cells == 3)
+            if (strcmp(rule, "standard") == 0)
+                if (gen[i][j] == 'X')
+                    if (cells == 2 || cells == 3)
+                        aux[i][j] = 'X';
+                    else
+                        aux[i][j] = '+';
+                else if (cells == 3)
                     aux[i][j] = 'X';
                 else
                     aux[i][j] = '+';
-            else if (cells == 3)
-                aux[i][j] = 'X';
-            else
-                aux[i][j] = '+';
-            if (gen[i][j] != aux[i][j])
-                add_node_list(first, last, i, j);
-        }
-        aux[i][M] = '\0';
-    }
-    return aux;
-}
-char **calculate_new_generation_B(char **gen, int N, int M, list **first, list **last)
-{
-    char **aux = allocate_memory_matrix(N, M);
-    (*first) = (*last) = NULL;
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < M; j++)
-        {
-            int cells = count_live_cells(gen, N, M, i, j);
-            if (cells == 2)
-                aux[i][j] = 'X';
-            else
-                aux[i][j] = gen[i][j];
+            else if (strcmp(rule, "B") == 0)
+                if (cells == 2)
+                    aux[i][j] = 'X';
+                else
+                    aux[i][j] = gen[i][j];
             if (gen[i][j] != aux[i][j])
                 add_node_list(first, last, i, j);
         }

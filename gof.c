@@ -50,7 +50,7 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         for (int i = 1; i <= K; i++)
         {
             list *first, *last;
-            char **aux = calculate_new_generation_standard(gen, N, M, &first, &last);
+            char **aux = calculate_new_generation(gen, N, M, &first, &last,"standard");
             copy_generation(gen, aux, N, M);
             free_memory_matrix(aux, N, M);
             free_memory_list(first);
@@ -63,7 +63,7 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         for (int i = 1; i <= K; i++)
         {
             list *first, *last;
-            char **aux = calculate_new_generation_standard(gen, N, M, &first, &last);
+            char **aux = calculate_new_generation(gen, N, M, &first, &last,"standard");
             copy_generation(gen, aux, N, M);
             free_memory_matrix(aux, N, M);
             push_node_stack(&top, i, first);

@@ -63,13 +63,13 @@ void fill_tree(char **gen, int N, int M, int K, tree *root)
     char **aux;
     list *first, *last;
 
-    aux = calculate_new_generation_B(gen, N, M, &first, &last);
+    aux = calculate_new_generation(gen, N, M, &first, &last,"B");
     root->left = create_node_tree(first, last);
     fill_tree(aux, N, M, K - 1, root->left);
     free_memory_matrix(aux, N, M);
     free_memory_list(first);
 
-    aux = calculate_new_generation_standard(gen, N, M, &first, &last);
+    aux = calculate_new_generation(gen, N, M, &first, &last,"standard");
     root->right = create_node_tree(first, last);
     fill_tree(aux, N, M, K - 1, root->right);
     free_memory_matrix(aux, N, M);
