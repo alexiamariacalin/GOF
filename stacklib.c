@@ -29,3 +29,11 @@ void push_node_stack(stack **top, int K, list *first)
         p->next = (*top);
     (*top) = p;
 }
+void free_memory_stack(stack *top)
+{
+    if (top == NULL)
+        return;
+    free_memory_stack(top->next);
+    free_memory_list(top->first);
+    free(top);
+}

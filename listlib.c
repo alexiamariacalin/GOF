@@ -35,3 +35,10 @@ void print_list(list *first, FILE *fout)
     fprintf(fout, "%d %d", first->l, first->c);
     fprintf(fout, "\n");
 }
+void free_memory_list(list *first)
+{
+    if (first == NULL)
+        return;
+    free_memory_list(first->next);
+    free(first);
+}

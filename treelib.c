@@ -13,7 +13,7 @@ tree *create_node_tree(list *first, list *last)
     p->right = NULL;
     return p;
 }
-void initialise_tree(tree **root, char **gen, int N, int M)
+void initialise_root(tree **root, char **gen, int N, int M)
 {
     list *first = NULL;
     list *last = NULL;
@@ -35,7 +35,7 @@ void reconstruct_generation_print_preorder(char **gen, int N, int M, int K, tree
 {
     if (K == 0)
         return;
-    char **aux = aux = allocate_memory_matrix(N, M);
+    char **aux = allocate_memory_matrix(N, M);
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
@@ -54,29 +54,33 @@ void reconstruct_generation_print_preorder(char **gen, int N, int M, int K, tree
     print_generation(aux, N, M, 0, fout);
     reconstruct_generation_print_preorder(aux, N, M, K - 1, node->left, fout);
     reconstruct_generation_print_preorder(aux, N, M, K - 1, node->right, fout);
+    free_memory_matrix(aux, N, M);
 }
 void fill_tree(char **gen, int N, int M, int K, tree *root)
 {
     if (K == 0)
         return;
-    char **auxl = allocate_memory_matrix(N, M);
-    char **auxr = allocate_memory_matrix(N, M);
-
-    copy_generation(auxl, gen, N, M);
-    copy_generation(auxr, gen, N, M);
-
+    char **aux;
     list *first, *last;
 
-    auxl = calculate_new_generation_B(auxl, N, M, &first, &last);
-    // printf("left: ");
-    // print_list(first, stdout);
+    aux = calculate_new_generation_B(gen, N, M, &first, &last);
     root->left = create_node_tree(first, last);
-    fill_tree(auxl, N, M, K - 1, root->left);
+    fill_tree(aux, N, M, K - 1, root->left);
+    free_memory_matrix(aux, N, M);
+    free_memory_list(first);
 
-    auxr = calculate_new_generation_standard(auxr, N, M, &first, &last);
-    // printf("right: ");
-    // print_list(first, stdout);
-    // printf("*\n\n");
+    aux = calculate_new_generation_standard(gen, N, M, &first, &last);
     root->right = create_node_tree(first, last);
-    fill_tree(auxr, N, M, K - 1, root->right);
+    fill_tree(aux, N, M, K - 1, root->right);
+    free_memory_matrix(aux, N, M);
+    free_memory_list(first);
+}
+void free_memory_tree(tree *root)
+{
+    if (root == NULL)
+        return;
+    free_memory_tree(root->left);
+    free_memory_tree(root->right);
+    free_memory_list(root->first);
+    free(root);
 }

@@ -10,3 +10,4 @@ typedef struct LIST
 list *create_node_list(int l, int c);
 void add_node_list(list **first, list **last, int l, int c);
 void print_list(list *first, FILE *fout);
+void free_memory_list(list *first);

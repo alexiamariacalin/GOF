@@ -5,8 +5,13 @@
 #include "stacklib.h"
 #include "listlib.h"
 #include "treelib.h"
-void open_files(FILE **fin, FILE **fout, const char *argv[])
+void open_files(FILE **fin, FILE **fout, const char *argv[], const int argc)
 {
+    if (argc < 3)
+    {
+        perror("ERROR: File(s) do(es)n't exist :(\n");
+        exit(1);
+    }
     *fin = fopen(argv[1], "rt");
     *fout = fopen(argv[2], "wt");
     if ((*fin) == NULL || (*fout) == NULL)
@@ -45,7 +50,10 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         for (int i = 1; i <= K; i++)
         {
             list *first, *last;
-            gen = calculate_new_generation_standard(gen, N, M, &first, &last);
+            char **aux = calculate_new_generation_standard(gen, N, M, &first, &last);
+            copy_generation(gen, aux, N, M);
+            free_memory_matrix(aux, N, M);
+            free_memory_list(first);
             print_generation(gen, N, M, i, fout);
         }
         break;
@@ -55,19 +63,23 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         for (int i = 1; i <= K; i++)
         {
             list *first, *last;
-            gen = calculate_new_generation_standard(gen, N, M, &first, &last);
+            char **aux = calculate_new_generation_standard(gen, N, M, &first, &last);
+            copy_generation(gen, aux, N, M);
+            free_memory_matrix(aux, N, M);
             push_node_stack(&top, i, first);
         }
         print_stack(top, fout);
+        free_memory_stack(top);
         break;
     }
     case 3: // task 3
     {
-        initialise_tree(&root, gen, N, M);
+        initialise_root(&root, gen, N, M);
         fill_tree(gen, N, M, K, root);
         print_generation(gen, N, M, K, fout);
         reconstruct_generation_print_preorder(gen, N, M, K, root->left, fout);
         reconstruct_generation_print_preorder(gen, N, M, K, root->right, fout);
+        free_memory_tree(root);
         break;
     }
     case 4: // task 4
@@ -75,6 +87,7 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         break;
     }
     }
+    free_memory_matrix(gen, N, M);
 }
 int main(int argc, const char *argv[])
 {
@@ -82,9 +95,9 @@ int main(int argc, const char *argv[])
     char **gen;
     stack *top = NULL;
     tree *root = NULL;
-    FILE *fin, *fout;
+    FILE *fin = NULL, *fout = NULL;
 
-    open_files(&fin, &fout, argv);
+    open_files(&fin, &fout, argv, argc);
     read_data(&T, &N, &M, &K, &gen, fin);
     solve_task(T, gen, N, M, K, top, root, fout);
     close_files(fin, fout);

@@ -12,3 +12,4 @@ typedef struct STACK
 void print_stack(stack *top, FILE *fout);
 stack *create_node_stack(int K, list *first);
 void push_node_stack(stack **top, int K, list *first);
+void free_memory_stack(stack *top);
