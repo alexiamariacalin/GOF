@@ -9,6 +9,7 @@ typedef struct TREE
     list *first, *last;
     struct TREE *left, *right;
 } tree;
+int is_empty_node(const tree *node);
 tree *create_node_tree(list *first, list *last);
 void initialise_root(tree **root, char **gen, int N, int M);
 void print_tree_preorder(tree *root, FILE *fout);

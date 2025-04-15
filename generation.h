@@ -5,6 +5,8 @@
 #include "stacklib.h"
 #include "listlib.h"
 #include "treelib.h"
+#define alive 'X'
+#define dead '+'
 void print_generation(char **gen, int N, int M, int K, FILE *fout);
 int in_matrix(int N, int M, int i, int j);
 int count_live_cells(char **gen, int N, int M, int i, int j);

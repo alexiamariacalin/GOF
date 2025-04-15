@@ -45,18 +45,18 @@ char **calculate_new_generation(char **gen, int N, int M, list **first, list **l
         {
             int cells = count_live_cells(gen, N, M, i, j);
             if (strcmp(rule, "standard") == 0)
-                if (gen[i][j] == 'X')
+                if (gen[i][j] == alive)
                     if (cells == 2 || cells == 3)
-                        aux[i][j] = 'X';
+                        aux[i][j] = alive;
                     else
-                        aux[i][j] = '+';
+                        aux[i][j] = dead;
                 else if (cells == 3)
-                    aux[i][j] = 'X';
+                    aux[i][j] = alive;
                 else
-                    aux[i][j] = '+';
+                    aux[i][j] = dead;
             else if (strcmp(rule, "B") == 0)
                 if (cells == 2)
-                    aux[i][j] = 'X';
+                    aux[i][j] = alive;
                 else
                     aux[i][j] = gen[i][j];
             if (gen[i][j] != aux[i][j])

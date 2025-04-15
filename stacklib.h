@@ -9,6 +9,7 @@ typedef struct STACK
     list *first, *last;
     struct STACK *next;
 } stack;
+int is_empty_stack(const stack *top);
 void print_stack(stack *top, FILE *fout);
 stack *create_node_stack(int K, list *first);
 void push_node_stack(stack **top, int K, list *first);

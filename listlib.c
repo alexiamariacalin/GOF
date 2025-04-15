@@ -1,4 +1,8 @@
 #include "listlib.h"
+int is_empty_list(const list *first)
+{
+    return first == NULL;
+}
 list *create_node_list(int l, int c)
 {
     list *p = (list *)malloc(sizeof(list));
@@ -25,7 +29,7 @@ void add_node_list(list **first, list **last, int l, int c)
 }
 void print_list(list *first, FILE *fout)
 {
-    if (first == NULL)
+    if (is_empty_list(first))
         return;
     while (first->next != NULL)
     {
@@ -37,7 +41,7 @@ void print_list(list *first, FILE *fout)
 }
 void free_memory_list(list *first)
 {
-    if (first == NULL)
+    if (is_empty_list(first))
         return;
     free_memory_list(first->next);
     free(first);

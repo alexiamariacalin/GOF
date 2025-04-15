@@ -1,5 +1,5 @@
 all:
-	make build run check delete
+	make build run check compress delete
 build:
 	gcc gof.c generation.c listlib.c stacklib.c treelib.c -o gof
 run:
@@ -8,6 +8,8 @@ check:
 	./checker -i
 add_files:
 	git add gof.c generation.c listlib.c stacklib.c treelib.c generation.h listlib.h stacklib.h treelib.h makefile in ref checker PA_proiect_gameoflife.pdf
+compress:
+	zip gof.zip gof.c gof generation.c listlib.c stacklib.c treelib.c generation.h listlib.h stacklib.h treelib.h makefile .git
 delete:
 	rm -f gof
 	bash -c 'for i in $$(seq 1 20); do rm -f "out/data$$i.out"; done'

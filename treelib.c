@@ -1,4 +1,8 @@
 #include "treelib.h"
+int is_empty_node(const tree *node)
+{
+    return node == NULL;
+}
 tree *create_node_tree(list *first, list *last)
 {
     tree *p = (tree *)malloc(sizeof(tree));
@@ -25,7 +29,7 @@ void initialise_root(tree **root, char **gen, int N, int M)
 }
 void print_tree_preorder(tree *root, FILE *fout)
 {
-    if (root == NULL)
+    if (is_empty_node(root))
         return;
     print_list(root->first, fout);
     print_tree_preorder(root->left, fout);
@@ -36,16 +40,17 @@ void reconstruct_generation_print_preorder(char **gen, int N, int M, int K, tree
     if (K == 0)
         return;
     char **aux = allocate_memory_matrix(N, M);
+    list *aux_node = node->first;
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
-            if (node->first != NULL && node->first->l == i && node->first->c == j)
+            if (aux_node != NULL && aux_node->l == i && aux_node->c == j)
             {
                 if (gen[i][j] == 'X')
                     aux[i][j] = '+';
                 else
                     aux[i][j] = 'X';
-                node->first = node->first->next;
+                aux_node = aux_node->next;
             }
             else
                 aux[i][j] = gen[i][j];
@@ -63,21 +68,19 @@ void fill_tree(char **gen, int N, int M, int K, tree *root)
     char **aux;
     list *first, *last;
 
-    aux = calculate_new_generation(gen, N, M, &first, &last,"B");
+    aux = calculate_new_generation(gen, N, M, &first, &last, "B");
     root->left = create_node_tree(first, last);
     fill_tree(aux, N, M, K - 1, root->left);
     free_memory_matrix(aux, N, M);
-    free_memory_list(first);
 
-    aux = calculate_new_generation(gen, N, M, &first, &last,"standard");
+    aux = calculate_new_generation(gen, N, M, &first, &last, "standard");
     root->right = create_node_tree(first, last);
     fill_tree(aux, N, M, K - 1, root->right);
     free_memory_matrix(aux, N, M);
-    free_memory_list(first);
 }
 void free_memory_tree(tree *root)
 {
-    if (root == NULL)
+    if (is_empty_node(root))
         return;
     free_memory_tree(root->left);
     free_memory_tree(root->right);
