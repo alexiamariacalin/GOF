@@ -1,4 +1,4 @@
-#include "stacklib.h"
+#include "../headers/stacklib.h"
 int is_empty_stack(const stack *top)
 {
     return top == NULL;

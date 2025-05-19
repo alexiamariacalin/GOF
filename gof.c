@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "generation.h"
-#include "stacklib.h"
-#include "listlib.h"
-#include "treelib.h"
+#include "headers/generation.h"
+#include "headers/stacklib.h"
+#include "headers/listlib.h"
+#include "headers/treelib.h"
 void open_files(FILE **fin, FILE **fout, const char *argv[], const int argc)
 {
-    if (argc < 3)
+    if (argc != 3)
     {
         perror("ERROR: File(s) do(es)n't exist :(\n");
         exit(1);
@@ -31,7 +31,7 @@ void close_files(FILE *fin, FILE *fout)
 void read_data(int *T, int *N, int *M, int *K, char ***gen, FILE *fin)
 {
     fscanf(fin, "%d %d %d %d", T, N, M, K);
-    (*gen) = allocate_memory_matrix(*N, *M);
+    (*gen) = (char **)allocate_memory_matrix(*N, *M, sizeof(char));
     char buf[2];
     for (int i = 0; i < *N; i++)
     {
@@ -50,9 +50,9 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         for (int i = 1; i <= K; i++)
         {
             list *first, *last;
-            char **aux = calculate_new_generation(gen, N, M, &first, &last,"standard");
+            char **aux = calculate_new_generation(gen, N, M, &first, &last, "standard");
             copy_generation(gen, aux, N, M);
-            free_memory_matrix(aux, N, M);
+            free_memory_matrix((void **)aux, N, M);
             free_memory_list(first);
             print_generation(gen, N, M, i, fout);
         }
@@ -63,9 +63,9 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         for (int i = 1; i <= K; i++)
         {
             list *first, *last;
-            char **aux = calculate_new_generation(gen, N, M, &first, &last,"standard");
+            char **aux = calculate_new_generation(gen, N, M, &first, &last, "standard");
             copy_generation(gen, aux, N, M);
-            free_memory_matrix(aux, N, M);
+            free_memory_matrix((void **)aux, N, M);
             push_node_stack(&top, i, first);
         }
         print_stack(top, fout);
@@ -77,17 +77,24 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         initialise_root(&root, gen, N, M);
         fill_tree(gen, N, M, K, root);
         print_generation(gen, N, M, K, fout);
-        reconstruct_generation_print_preorder(gen, N, M, K, root->left, fout);
-        reconstruct_generation_print_preorder(gen, N, M, K, root->right, fout);
+        print_generation_tree_preorder(gen, N, M, K, root->left, fout);
+        print_generation_tree_preorder(gen, N, M, K, root->right, fout);
         free_memory_tree(root);
         break;
     }
     case 4: // task 4
     {
+        initialise_root(&root, gen, N, M);
+        fill_tree(gen, N, M, K, root);
+        search_matrix_for_path(gen, N, M, fout);
+        t4(gen, N, M, 1, root->left, fout);
+        t4(gen, N, M, K, root->right, fout);
+        free_memory_tree(root);
+        printf("\n");
         break;
     }
     }
-    free_memory_matrix(gen, N, M);
+    free_memory_matrix((void **)gen, N, M);
 }
 int main(int argc, const char *argv[])
 {
