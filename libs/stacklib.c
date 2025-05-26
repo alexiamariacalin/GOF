@@ -39,3 +39,21 @@ void free_memory_stack(stack *top)
     free_memory_list(top->first);
     free(top);
 }
+void bonus_task2(char **gen, int N, int M, int K, stack *top, FILE *fout)
+{
+    while (top)
+    {
+        list *aux = top->first;
+        while (aux)
+        {
+            if (gen[aux->l][aux->c] == alive)
+                gen[aux->l][aux->c] = dead;
+            else
+                gen[aux->l][aux->c] = alive;
+            aux = aux->next;
+        }
+        top = top->next;
+    }
+    free_memory_stack(top);
+    print_generation(gen, N, M, 0, fout);
+}

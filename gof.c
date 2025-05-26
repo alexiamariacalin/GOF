@@ -87,7 +87,7 @@ void solve_task(int T, char **gen, int N, int M, int K, stack *top, tree *root, 
         initialise_root(&root, gen, N, M);
         fill_tree(gen, N, M, K, root);
         search_matrix_for_path(gen, N, M, fout);
-        t4(gen, N, M, 1, root->left, fout);
+        t4(gen, N, M, K, root->left, fout);
         t4(gen, N, M, K, root->right, fout);
         free_memory_tree(root);
         printf("\n");
